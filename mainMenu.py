@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 
-from requests import delete
+from topic import *
 from database import *
 
 
@@ -42,7 +42,8 @@ class mainMenu:
 
         if len(self.topics)>0:
             for i in range(len(self.topics)):
-                button = ttk.Button(menu, text=str(self.topics[i]))
+                topic = Topic(self.root,self.topics[i])
+                button = ttk.Button(menu, text=str(self.topics[i]), command=topic.createTopicWindow)
                 button.grid(column=0,row=i+1)
 
 
@@ -101,7 +102,7 @@ class mainMenu:
 
         def delete_topic(deleteWindow): # deletes last added topic, not the proper one
             title = deleteEntry.get()
-            print("TITLE: ", title)
+            #print("TITLE: ", title)
             if title in self.topics:
                 self.topics.remove(title)
                 createDeleteTable(conn,title)

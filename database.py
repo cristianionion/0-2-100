@@ -45,6 +45,31 @@ def getTables(conn):
     return result
 
 
+def addTitleDB(conn,topic,title,scaleValue):
+    # each row needs:
+    #   title, (scale, scale value) (for now, can add more later)
+    conn.database = "zeroto100"
+    cursor = conn.cursor()
+    query = "INSERT INTO "+str(topic)+ " (title,scale_value) VALUES (%s,%s)"
+    vals = (title, str(scaleValue))
+    print(query, vals)
+    cursor.execute(query,vals)
+    cursor.close()
+    conn.commit()
+
+
+def updateTitle(conn, topic,title, scaleValue):
+    conn.database = "zeroto100"
+    cursor = conn.cursor()
+    # title and desc don't change, remaining are buckets on board
+    # search for card title, make newLocation column True, rest false
+    # need sum like UPDATE board SET oldLoc = False, newLoc = True WHERE title = cardTitle
+    query = "UPDATE "+str(topic)+ " SET "+ str(scaleValue)+" =%s WHERE title =%s "
+    #print(query)
+    vals = (scaleValue, str(title))
+    cursor.execute(query,vals)
+    cursor.close()
+    conn.commit()
 
 ############################################################
 # found way to delete saved table on next tkinter restart,
@@ -102,50 +127,45 @@ for i in range(len(topics2Delete)):
     deleteTopicfromdeleteDB(conn,topics2Delete[i][0])
 
 
+# returns all data for a specific topic
+def selectAll(conn,topic):
+    conn.database = "zeroto100"
+    cursor = conn.cursor()
+    query = "SELECT * FROM "+str(topic)
+    print(query)
+    cursor.execute(query)
+    result = cursor.fetchall()
+    cursor.close()
+    return result
+
+
+
+def existsTable(conn,topic):
+    conn.database = "zeroto100"
+    cursor = conn.cursor()
+    query = "SELECT COUNT(*) FROM "+str(topic)
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    cursor.close()
+    return rows
+
+
+#print("DOES IT Exist",existsTable(conn, "a")[0][0],existsTable(conn, "aa"))
 ############################################################################################################
 #  so far only above DB functions are specific for this project                                            #
 ############################################################################################################
 
 
-def addCard(conn,query, info):
-    binNum = info[0]
-    name = info[1]
-    desc = info[2]
-    vals = [name, desc,True] 
-    for i in range(binNum-1):
-        vals.append(False)
-    conn.database = "zeroto100"
-    cursor = conn.cursor()
-    #query = "INSERT INTO "+str(board)+ " (card,card_notes,cards_assignment) VALUES (%s,%s,%s)"
-    #vals = (card, card_notes,cards_assignment)
-    #print(query, vals)
-    cursor.execute(query,vals)
-    cursor.close()
-    conn.commit()
 
-def cardMoved(conn, board, cardTitle, oldLocation, newLocation):
-    conn.database = "zeroto100"
-    cursor = conn.cursor()
-    # title and desc don't change, remaining are buckets on board
-    # search for card title, make newLocation column True, rest false
-    # need sum like UPDATE board SET oldLoc = False, newLoc = True WHERE title = cardTitle
-    query = "UPDATE "+str(board).replace(" ","あ")+ " SET "+ str(oldLocation).replace(" ","あ")+" =%s, "+str(newLocation).replace(" ","あ")+" =%s WHERE title =%s "
-    #print(query)
-    vals = (False,True, str(cardTitle))
-    cursor.execute(query,vals)
-    cursor.close()
-    conn.commit()
 
-# returns all data for a specific board
-def selectAll(conn,board):
-    conn.database = "zeroto100"
-    cursor = conn.cursor()
-    query = "SELECT * FROM "+str(board)
-    #print(query)
-    cursor.execute(query)
-    result = cursor.fetchall()
-    cursor.close()
-    return result
+
+
+#btopic = selectAll(conn,"b")
+#print("BBBBBBBBBBB",btopic)
+#for i in range(len(btopic)):
+    #print(btopic[i], btopic[i][0],type(btopic[i][0]))
+#    print(btopic[i][1],type(btopic[i][1]))
+    
 
 # returns all data for a specific card
 def selectOne(conn,board,card):
@@ -203,20 +223,21 @@ def getColumns(conn,board):
 allTopicsMessy = getTables(conn)
 print("ALL TOPICS: ",allTopicsMessy)
 allTopics = []
-for i in range(len(allTopicsMessy)):
-    print(allTopicsMessy[i][0], type(allTopicsMessy[i][0]))
-    allTopics.append(allTopicsMessy[i][0])
+if len(allTopicsMessy) >0:
+    for i in range(len(allTopicsMessy)):
+        print(allTopicsMessy[i][0], type(allTopicsMessy[i][0]))
+        allTopics.append(allTopicsMessy[i][0])
 
-print(allTopics, type(allTopics[0]))
+    print(allTopics, type(allTopics[0]))
 
 
 
-allTopicsAndTables = []
-for i in range(len(allTopics)):
-    tempBoardTitle = allTopics[i][0]
-    allTopicsAndTables.append(selectAll(conn,tempBoardTitle))
+#allTopicsAndTables = []
+#for i in range(len(allTopics)):
+#    tempBoardTitle = allTopics[i][0]
+#    allTopicsAndTables.append(selectAll(conn,tempBoardTitle))
     #print("\n")
-
+"""
 def getAllData():
     allData = []
     for i in range(len(allTopics)):
@@ -230,5 +251,7 @@ def getAllData():
             allData[i].append(allTopicsAndTables[i][k])
     return allData
 
+#aldat = getAllData()
+#print("ALLDATA: ",aldat)
 
-
+"""
