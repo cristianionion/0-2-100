@@ -7,3 +7,14 @@ After saving the information for titles in a topic, you can exit out of the prog
 
 GUI -> Python TKinter
 Database -> MySQL
+
+
+
+Potential Uses:
+1) Keep track of grades
+2) Task management
+3) Hobby/Goal tracking
+
+
+
+TODO: add option to convert two numbers (numerator and denominator) into the 0-100 scale percent
